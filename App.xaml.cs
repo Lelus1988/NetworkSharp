@@ -1,10 +1,12 @@
 using System.Windows;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NetworkSharp.Data;
 using NetworkSharp.Data.Repositories;
 using NetworkSharp.Services;
+using NetworkSharp.Views;
 
 namespace NetworkSharp
 {
@@ -15,7 +17,7 @@ namespace NetworkSharp
     {
         private ServiceProvider? _serviceProvider;
 
-        private void Application_Startup(object sender, StartupEventArgs e)
+        private async void Application_Startup(object sender, StartupEventArgs e)
         {
             // Setup dependency injection
             var services = new ServiceCollection();
@@ -38,6 +40,18 @@ namespace NetworkSharp
             services.AddSingleton<IUpdateService, UpdateService>();
             
             _serviceProvider = services.BuildServiceProvider();
+
+            if (!AcceptTerms())
+            {
+                Shutdown();
+                return;
+            }
+
+            if (!await OfferUpdateAsync())
+            {
+                Shutdown();
+                return;
+            }
             
             // Initialize database
             var dbInitializer = _serviceProvider.GetRequiredService<INetworkDataRepository>();
@@ -46,26 +60,50 @@ namespace NetworkSharp
             // Create and show the main window
             var mainWindow = new MainWindow();
             mainWindow.Show();
-            _ = CheckForUpdatesAsync(mainWindow);
         }
 
-        private async Task CheckForUpdatesAsync(Window owner)
+        private bool AcceptTerms()
+        {
+            var termsPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "NetworkSharp",
+                "terms-accepted.txt");
+
+            if (File.Exists(termsPath))
+                return true;
+
+            var dialog = new StartupGateWindow(
+                "Nutzungsbedingungen",
+                "NetworkSharp ist ein Diagnosewerkzeug für deine eigenen Geräte und Netzwerke. Verwende Scans und Tests nur dort, wo du dazu berechtigt bist. Die Ergebnisse können abhängig von Windows, Netzwerk und Firewall unvollständig sein.\n\nMit \"Ja, akzeptieren\" bestätigst du, dass du diese Hinweise gelesen hast und NetworkSharp auf eigene Verantwortung verwendest.",
+                "Ja, akzeptieren",
+                "Schließen");
+
+            if (dialog.ShowDialog() != true)
+                return false;
+
+            Directory.CreateDirectory(Path.GetDirectoryName(termsPath)!);
+            File.WriteAllText(termsPath, DateTime.UtcNow.ToString("O"));
+            return true;
+        }
+
+        private async Task<bool> OfferUpdateAsync()
         {
             try
             {
                 var currentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
-                var updateService = _serviceProvider?.GetRequiredService<IUpdateService>();
-                if (updateService == null)
-                    return;
-
+                var updateService = _serviceProvider!.GetRequiredService<IUpdateService>();
                 var update = await updateService.CheckForUpdateAsync(currentVersion);
-                if (update == null || !owner.IsVisible)
-                    return;
+                if (update == null)
+                    return true;
 
-                var message = $"Eine neue NetworkSharp-Version ist verfügbar: {update.ReleaseName}.\n\nJetzt ohne Administratorrechte aktualisieren?";
-                var answer = MessageBox.Show(owner, message, "NetworkSharp-Update", MessageBoxButton.YesNo, MessageBoxImage.Information);
-                if (answer != MessageBoxResult.Yes)
-                    return;
+                var dialog = new StartupGateWindow(
+                    "Neue Version ist verfügbar",
+                    $"NetworkSharp {update.Version} steht bereit.\n\nMöchtest du jetzt aktualisieren? Die aktuelle App wird danach geschlossen und der Installer gestartet.",
+                    "Ja, jetzt aktualisieren",
+                    "Schließen");
+
+                if (dialog.ShowDialog() != true)
+                    return false;
 
                 var installerPath = await updateService.DownloadInstallerAsync(update);
                 Process.Start(new ProcessStartInfo
@@ -73,14 +111,15 @@ namespace NetworkSharp
                     FileName = installerPath,
                     UseShellExecute = true
                 });
-                Shutdown();
+                return false;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Update check failed: {ex.Message}");
+                return true;
             }
         }
-        
+
         protected override void OnExit(ExitEventArgs e)
         {
             _serviceProvider?.Dispose();
