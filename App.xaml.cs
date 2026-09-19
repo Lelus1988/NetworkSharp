@@ -1,4 +1,6 @@
 using System.Windows;
+using System.Diagnostics;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NetworkSharp.Data;
 using NetworkSharp.Data.Repositories;
@@ -33,6 +35,7 @@ namespace NetworkSharp
             services.AddTransient<ITracerouteService, TracerouteService>();
             services.AddTransient<IWhoisService, WhoisService>();
             services.AddTransient<ISpeedTestService, SpeedTestService>();
+            services.AddSingleton<IUpdateService, UpdateService>();
             
             _serviceProvider = services.BuildServiceProvider();
             
@@ -43,6 +46,39 @@ namespace NetworkSharp
             // Create and show the main window
             var mainWindow = new MainWindow();
             mainWindow.Show();
+            _ = CheckForUpdatesAsync(mainWindow);
+        }
+
+        private async Task CheckForUpdatesAsync(Window owner)
+        {
+            try
+            {
+                var currentVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
+                var updateService = _serviceProvider?.GetRequiredService<IUpdateService>();
+                if (updateService == null)
+                    return;
+
+                var update = await updateService.CheckForUpdateAsync(currentVersion);
+                if (update == null || !owner.IsVisible)
+                    return;
+
+                var message = $"Eine neue NetworkSharp-Version ist verfügbar: {update.ReleaseName}.\n\nJetzt ohne Administratorrechte aktualisieren?";
+                var answer = MessageBox.Show(owner, message, "NetworkSharp-Update", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (answer != MessageBoxResult.Yes)
+                    return;
+
+                var installerPath = await updateService.DownloadInstallerAsync(update);
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = installerPath,
+                    UseShellExecute = true
+                });
+                Shutdown();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Update check failed: {ex.Message}");
+            }
         }
         
         protected override void OnExit(ExitEventArgs e)
