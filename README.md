@@ -50,6 +50,7 @@ NetworkSharp 2.2.1 verwendet ein dunkles Network-Console-Design mit:
 
 - [Aktuelle Änderungen](update.md)
 - [Entwicklerübersicht und Projektstruktur](DEVELOPMENT.md)
+- [Releases manuell erstellen](RELEASING.md)
 - [Neueste Releases](https://github.com/Lelus1988/NetworkSharp/releases/latest)
 - [Alle Releases](https://github.com/Lelus1988/NetworkSharp/releases)
 - [GitHub Actions](https://github.com/Lelus1988/NetworkSharp/actions)
