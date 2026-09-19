@@ -1,11 +1,11 @@
 # NetworkSharp Updates
 
-## Aktuelle Version: 2.1
+## Aktuelle Version: 2.1.1
 
 NetworkSharp ist ein kompaktes Windows-Werkzeug, mit dem du deine Netzwerkverbindung prüfen, beobachten und besser verstehen kannst. Die wichtigsten Informationen stehen direkt in der App, ohne dass du mehrere Systemtools öffnen musst.
 
 > [!NOTE]
-> Die Versionsnummer lautet `2.1.0`. Für den normalen Download ist der fertige Windows-Installer gedacht. Der Quellcode bleibt auf GitHub sichtbar, muss aber nicht heruntergeladen oder selbst gebaut werden.
+> Die Versionsnummer lautet `2.1.1`. Für den normalen Download ist der fertige Windows-Installer gedacht. Der Quellcode bleibt auf GitHub sichtbar, muss aber nicht heruntergeladen oder selbst gebaut werden.
 
 ## Die wichtigsten Funktionen
 
@@ -33,6 +33,12 @@ Die Oberfläche wurde zu einer übersichtlichen Network Console überarbeitet. D
 - moderne blaue Buttons mit weichen Ecken und Hover-/Klick-Zuständen
 - einheitliche ComboBoxen für Auswahlfelder wie Ping-Intervall und Testserver
 - weniger Standard-WPF-Optik und ein konsistenteres Erscheinungsbild über alle Ansichten
+
+### Patch 2.1.1
+
+- ComboBoxen bleiben jetzt dunkel und passen zu den runden Textfeldern und Buttons
+- weiße Standard-WPF-Dropdowns wurden durch ein eigenes blaues Dropdown-Design ersetzt
+- Auswahlpfeil, Dropdown-Liste und Fokus-Rand verwenden jetzt die NetworkSharp-Farben
 
 ### Netzwerk-Monitor
 
@@ -67,7 +73,7 @@ Der Ping-Bereich zeigt nicht nur einen einzelnen Wert, sondern macht die Stabili
 - Diagrammwerte werden laufend aktualisiert, ohne die komplette Serie auszutauschen
 
 > [!IMPORTANT]
-> NetworkSharp 2.1 enthält bewusst **keine VPN-Funktion**. Die Anwendung misst und analysiert deine Verbindung, baut aber keinen VPN-Tunnel auf und verändert deine öffentliche IP nicht.
+> NetworkSharp 2.1.1 enthält bewusst **keine VPN-Funktion**. Die Anwendung misst und analysiert deine Verbindung, baut aber keinen VPN-Tunnel auf und verändert deine öffentliche IP nicht.
 
 ## Download und Installation
 
@@ -97,6 +103,7 @@ Die neueste Version bekommst du immer hier:
 - [Release v1.0](https://github.com/Lelus1988/NetworkSharp/releases/tag/v1.0)
 - [Release v2.0](https://github.com/Lelus1988/NetworkSharp/releases/tag/v2.0)
 - [Release v2.1](https://github.com/Lelus1988/NetworkSharp/releases/tag/v2.1)
+- [Release v2.1.1](https://github.com/Lelus1988/NetworkSharp/releases/tag/v2.1.1)
 
 ## Hinweis zu Updates
 
