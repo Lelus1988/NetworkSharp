@@ -1,11 +1,11 @@
 # NetworkSharp Updates
 
-## Aktuelle Version: 2.1.1
+## Aktuelle Version: 2.2
 
 NetworkSharp ist ein kompaktes Windows-Werkzeug, mit dem du deine Netzwerkverbindung prüfen, beobachten und besser verstehen kannst. Die wichtigsten Informationen stehen direkt in der App, ohne dass du mehrere Systemtools öffnen musst.
 
 > [!NOTE]
-> Die Versionsnummer lautet `2.1.1`. Für den normalen Download ist der fertige Windows-Installer gedacht. Der Quellcode bleibt auf GitHub sichtbar, muss aber nicht heruntergeladen oder selbst gebaut werden.
+> Die Versionsnummer lautet `2.2.0`. Für den normalen Download ist der fertige Windows-Installer gedacht. Der Quellcode bleibt auf GitHub sichtbar, muss aber nicht heruntergeladen oder selbst gebaut werden.
 
 ## Die wichtigsten Funktionen
 
@@ -40,6 +40,15 @@ Die Oberfläche wurde zu einer übersichtlichen Network Console überarbeitet. D
 - weiße Standard-WPF-Dropdowns wurden durch ein eigenes blaues Dropdown-Design ersetzt
 - Auswahlpfeil, Dropdown-Liste und Fokus-Rand verwenden jetzt die NetworkSharp-Farben
 
+### Was in 2.2 neu ist
+
+- NetworkSharp prüft beim Start automatisch, ob auf GitHub eine neuere Version verfügbar ist
+- der Update-Check läuft im Hintergrund und blockiert den normalen Start nicht
+- ein Update wird erst nach einer sichtbaren Bestätigung durch den Benutzer geladen
+- heruntergeladen wird ausschließlich der Release-Installer `NetworkSharp-Setup-{Version}.exe`
+- der Installer wird pro Benutzer gestartet und benötigt keine Änderung an `C:\Program Files`
+- ohne Internetverbindung oder bei einem nicht erreichbaren GitHub-Dienst läuft die App normal weiter
+
 ### Netzwerk-Monitor
 
 Der Netzwerk-Monitor zeigt aktuelle und historische Daten in einer einheitlichen Kurve.
@@ -73,7 +82,7 @@ Der Ping-Bereich zeigt nicht nur einen einzelnen Wert, sondern macht die Stabili
 - Diagrammwerte werden laufend aktualisiert, ohne die komplette Serie auszutauschen
 
 > [!IMPORTANT]
-> NetworkSharp 2.1.1 enthält bewusst **keine VPN-Funktion**. Die Anwendung misst und analysiert deine Verbindung, baut aber keinen VPN-Tunnel auf und verändert deine öffentliche IP nicht.
+> NetworkSharp 2.2 enthält bewusst **keine VPN-Funktion**. Die Anwendung misst und analysiert deine Verbindung, baut aber keinen VPN-Tunnel auf und verändert deine öffentliche IP nicht.
 
 ## Download und Installation
 
@@ -104,6 +113,7 @@ Die neueste Version bekommst du immer hier:
 - [Release v2.0](https://github.com/Lelus1988/NetworkSharp/releases/tag/v2.0)
 - [Release v2.1](https://github.com/Lelus1988/NetworkSharp/releases/tag/v2.1)
 - [Release v2.1.1](https://github.com/Lelus1988/NetworkSharp/releases/tag/v2.1.1)
+- [Release v2.2](https://github.com/Lelus1988/NetworkSharp/releases/tag/v2.2)
 
 ## Hinweis zu Updates
 

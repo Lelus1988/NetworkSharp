@@ -79,6 +79,8 @@ NetworkSharp/
 │   ├── TracerouteService.cs          # Traceroute-Funktion
 │   ├── IWhoisService.cs              # Vertrag für WHOIS-Abfragen
 │   ├── WhoisService.cs               # WHOIS-Abfragen
+│   ├── IUpdateService.cs             # Vertrag für Release-Updates
+│   ├── UpdateService.cs              # GitHub-Release-Check und Installer-Download
 │   └── NetworkAddressHelper.cs       # IP- und Subnetz-Hilfsfunktionen
 │
 ├── ViewModels/                       # Bindable Zustände der Ansichten
@@ -171,4 +173,4 @@ dotnet test .\NetworkSharp.Tests\NetworkSharp.Tests.csproj
 git diff --check
 ```
 
-Für eine Release-Veröffentlichung wird ein Tag wie `v2.1.1` zum GitHub-Repository gepusht. Der Workflow unter `.github/workflows/release.yml` baut daraus den per-user Installer.
+Für eine Release-Veröffentlichung wird ein Tag wie `v2.2` zum GitHub-Repository gepusht. Der Workflow unter `.github/workflows/release.yml` baut daraus den per-user Installer. Die Anwendung prüft beim nächsten Start die neueste veröffentlichte Version und fragt vor dem Update nach.
