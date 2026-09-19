@@ -9,11 +9,19 @@ namespace NetworkSharp.Common
     public class RelayCommand : ICommand
     {
         private readonly Action _execute;
+        private readonly Action<object?>? _executeWithParameter;
         private readonly Func<bool>? _canExecute;
 
         public RelayCommand(Action execute, Func<bool>? canExecute = null)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
+
+        public RelayCommand(Action<object?> execute, Func<bool>? canExecute = null)
+        {
+            _executeWithParameter = execute ?? throw new ArgumentNullException(nameof(execute));
+            _execute = () => { };
             _canExecute = canExecute;
         }
 
@@ -30,7 +38,10 @@ namespace NetworkSharp.Common
 
         public void Execute(object? parameter)
         {
-            _execute();
+            if (_executeWithParameter != null)
+                _executeWithParameter(parameter);
+            else
+                _execute();
         }
     }
 

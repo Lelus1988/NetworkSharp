@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using LiveCharts;
-using LiveCharts.Wpf;
 using NetworkSharp.Services;
 
 namespace NetworkSharp.ViewModels
@@ -14,40 +13,24 @@ namespace NetworkSharp.ViewModels
     /// <summary>
     /// ViewModel for the Ping feature
     /// </summary>
-    public class PingViewModel : INotifyPropertyChanged, IDisposable
+    public partial class PingViewModel : INotifyPropertyChanged, IDisposable
     {
         private readonly IPingService _pingService;
         private PingStatistics _statistics;
 
-        public SeriesCollection PingSeries { get; set; }
-        public ObservableCollection<string> Intervals { get; set; }
+        public System.Collections.ObjectModel.ObservableCollection<string> Intervals { get; set; }
 
         public PingViewModel(IPingService pingService)
         {
             _pingService = pingService;
 
-            PingSeries = new SeriesCollection();
             Intervals = new ObservableCollection<string> { "1 s", "2 s", "5 s", "10 s" };
 
             _statistics = _pingService.Statistics;
 
-            InitializeCharts();
+            InitChart();
 
             _pingService.PingResult += OnPingResult;
-        }
-
-        private void InitializeCharts()
-        {
-            PingSeries.Clear();
-            PingSeries.Add(new LineSeries
-            {
-                Title = "Antwortzeit",
-                Values = new ChartValues<double> { 14, 16, 11, 58, 15, 13, 14 },
-                PointGeometry = null,
-                Fill = System.Windows.Media.Brushes.Transparent,
-                Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(137, 220, 235)),
-                StrokeThickness = 2
-            });
         }
 
         private void OnPingResult(object? sender, PingResultEventArgs e)
@@ -68,21 +51,7 @@ namespace NetworkSharp.ViewModels
                 {
                     _statistics = _pingService.Statistics;
 
-                    if (PingSeries.Count == 0)
-                    {
-                        InitializeCharts();
-                    }
-
-                    var currentValues = PingSeries[0]?.Values as ChartValues<double>;
-                    if (currentValues != null)
-                    {
-                        currentValues.Add(e.Success ? e.ResponseTime : 0);
-
-                        if (currentValues.Count > 120)
-                        {
-                            currentValues.RemoveAt(0);
-                        }
-                    }
+                    OnPingResult(e.Success ? e.ResponseTime : null);
 
                     OnPropertyChanged(nameof(CurrentPing));
                     OnPropertyChanged(nameof(AveragePing));
@@ -116,6 +85,7 @@ namespace NetworkSharp.ViewModels
             try
             {
                 IsPinging = true;
+                ResetChart(Interval / 1000d);
                 await _pingService.StartPingAsync(Target, Interval);
             }
             catch (Exception ex)
@@ -143,9 +113,7 @@ namespace NetworkSharp.ViewModels
             _pingService.ResetStatistics();
             _statistics = _pingService.Statistics;
             
-            // Clear chart
-            var currentValues = PingSeries[0].Values as ChartValues<double>;
-            currentValues?.Clear();
+            ResetChart(Interval / 1000d);
             
             OnPropertyChanged(nameof(CurrentPing));
             OnPropertyChanged(nameof(AveragePing));

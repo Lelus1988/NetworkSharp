@@ -26,6 +26,7 @@ namespace NetworkSharp.Views
                 if (DataContext is NetworkMonitorViewModel viewModel)
                 {
                     await viewModel.StopMonitoringAsync();
+                    viewModel.StopChartTimer();
                 }
             };
         }
