@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:NetworkSharp"
         xmlns:views="clr-namespace:NetworkSharp.Views"
         mc:Ignorable="d"
-        Title="NetworkSharp 2.2.1" Height="760" Width="1360" MinHeight="620" MinWidth="1040"
+        Title="NetworkSharp 2.2.2" Height="760" Width="1360" MinHeight="620" MinWidth="1040"
         Background="{StaticResource WindowGradient}"
         WindowStartupLocation="CenterScreen">
     <Grid>
@@ -89,7 +89,7 @@
                 <!-- Footer -->
                 <Border Grid.Row="2" Padding="22,18" Background="#0A141D" BorderBrush="{StaticResource GridLine}" BorderThickness="0,1,0,0">
                     <StackPanel>
-                        <TextBlock Text="NETWORKSHARP 2.2.1" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}"/>
+                        <TextBlock Text="NETWORKSHARP 2.2.2" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}"/>
                         <TextBlock Text="● SYSTEM ONLINE" FontSize="10" Foreground="{StaticResource SuccessColor}" Margin="0,6,0,0"/>
                     </StackPanel>
                 </Border>

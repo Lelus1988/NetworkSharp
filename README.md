@@ -34,7 +34,7 @@ Die Installation benötigt normalerweise keine Administratorrechte.
 
 ## Aktuelle Oberfläche
 
-NetworkSharp 2.2.1 verwendet ein dunkles Network-Console-Design mit:
+NetworkSharp 2.2.2 verwendet ein dunkles Network-Console-Design mit:
 
 - runden blauen Buttons und Eingabefeldern
 - dunklen ComboBoxen ohne weiße Standard-WPF-Flächen
