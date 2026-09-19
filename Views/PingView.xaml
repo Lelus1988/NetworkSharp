@@ -1,0 +1,205 @@
+<UserControl x:Class="NetworkSharp.Views.PingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NetworkSharp.Views"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="Ping" Style="{StaticResource TitleStyle}"/>
+            <TextBlock Text="Latenz zu einem Ziel in Echtzeit" Style="{StaticResource SubtitleStyle}"/>
+            
+            <!-- Input Section -->
+            <Border Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Target Input -->
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                        <TextBlock Text="Ziel" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" 
+                                 Height="36" Padding="8" Background="#45475A" Foreground="{StaticResource TextPrimary}"
+                                 BorderThickness="0" FontSize="14"/>
+                    </StackPanel>
+                    
+                    <!-- Interval Display -->
+                    <StackPanel Grid.Column="1" Margin="0,0,16,0">
+                        <TextBlock Text="Intervall" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,4"/>
+                        <ComboBox ItemsSource="{Binding Intervals}" SelectedItem="{Binding IntervalDisplay}" 
+                                  Height="36" Background="#45475A" Foreground="{StaticResource TextPrimary}"
+                                  BorderThickness="0" FontSize="14" Padding="8"/>
+                    </StackPanel>
+                    
+                    <!-- Stop Button -->
+                    <Button Grid.Column="2" Content="Stopp" Style="{StaticResource ButtonStyle}" 
+                            Background="{StaticResource ErrorColor}" Foreground="#1E1E2E"
+                            Height="36" Width="100" VerticalAlignment="Bottom" Click="StopPing_Click"
+                            Visibility="{Binding IsPinging, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </Grid>
+            </Border>
+            
+            <!-- Summary Statistics Cards -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="Aktuell" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="{Binding CurrentPing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" 
+                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                    </StackPanel>
+                </Border>
+                
+                <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0">
+                    <StackPanel>
+                        <TextBlock Text="Durchschnitt" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="{Binding AveragePing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" 
+                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                    </StackPanel>
+                </Border>
+                
+                <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8,0">
+                    <StackPanel>
+                        <TextBlock Text="Minimum" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="{Binding MinimumPing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" 
+                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                    </StackPanel>
+                </Border>
+                
+                <Border Grid.Column="3" Style="{StaticResource CardStyle}" Margin="8,0">
+                    <StackPanel>
+                        <TextBlock Text="Maximum" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="{Binding MaximumPing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" 
+                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                    </StackPanel>
+                </Border>
+                
+                <Border Grid.Column="4" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Paketverlust" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="{Binding PacketLoss, StringFormat={}{0:F1} %}" FontSize="24" FontWeight="Bold" 
+                                   Foreground="{StaticResource WarningColor}" Margin="0,4"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            
+            <!-- Response Time Graph -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Antwortzeit (letzte 2 Minuten)" FontSize="16" FontWeight="SemiBold" 
+                               Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16"/>
+                    
+                    <lvc:CartesianChart Height="250" Series="{Binding PingSeries}">
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="Zeit" Labels="-2:00,-1:40,-1:20,-1:00,-0:40,-0:20,jetzt">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="1"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="ms" MinValue="0" MaxValue="80">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="20"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </StackPanel>
+            </Border>
+            
+            <!-- Packet Status -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Column="0" Text="Pakete" FontSize="16" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}"/>
+                        <TextBlock Grid.Column="1" FontSize="14" Foreground="{StaticResource TextSecondary}">
+                            <Run Text="Verloren: "/>
+                            <Run Text="{Binding LostPackets}"/>
+                            <Run Text=" von "/>
+                            <Run Text="{Binding TotalPackets}"/>
+                        </TextBlock>
+                    </Grid>
+                    
+                    <!-- Packet visualization -->
+                    <ItemsControl Margin="0,16,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="8" Height="8" Margin="1" Background="{StaticResource SuccessColor}" 
+                                        CornerRadius="2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Connection tips -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Verbindung verbessern" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Hohe Latenz oder Paketverlust lässt sich oft direkt an der Verbindung beheben."
+                               FontSize="12" Foreground="{StaticResource TextSecondary}"
+                               TextWrapping="Wrap" Margin="0,0,0,16"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                            <TextBlock Text="WLAN" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{StaticResource AccentColor}" Margin="0,0,0,6"/>
+                            <TextBlock Text="- Router möglichst frei und erhöht aufstellen&#10;- Für geringe Latenz 5 oder 6 GHz nutzen&#10;- Bei vielen Netzen den WLAN-Kanal wechseln"
+                                       FontSize="12" Foreground="{StaticResource TextSecondary}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="6,0">
+                            <TextBlock Text="Ethernet" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{StaticResource SuccessColor}" Margin="0,0,0,6"/>
+                            <TextBlock Text="- Für Spiele und wichtige Tests Kabel verwenden&#10;- Kabel und Router-Port auf mindestens 1 Gbit/s prüfen&#10;- WLAN während des Vergleichs deaktivieren"
+                                       FontSize="12" Foreground="{StaticResource TextSecondary}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Margin="12,0,0,0">
+                            <TextBlock Text="Allgemein" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{StaticResource WarningColor}" Margin="0,0,0,6"/>
+                            <TextBlock Text="- Downloads, Cloud-Sync und VPN testweise pausieren&#10;- Router und Netzwerkadapter aktualisieren&#10;- Mit mehreren Zielen testen: nur ein Ziel kann langsam sein"
+                                       FontSize="12" Foreground="{StaticResource TextSecondary}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

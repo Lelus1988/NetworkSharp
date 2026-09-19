@@ -1,0 +1,127 @@
+<UserControl x:Class="NetworkSharp.Views.SpeedTestView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid Background="#1E1E2E">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#252535" Padding="20" Margin="10" CornerRadius="10">
+            <StackPanel>
+                <TextBlock Text="Speed Test" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                <TextBlock Text="Testen Sie Ihre Internetgeschwindigkeit" FontSize="14" Foreground="#89B4FA" Margin="0,5,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Column - Results -->
+            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                <!-- Download Speed -->
+                <Border Background="#252535" Padding="20" Margin="0,0,0,10" CornerRadius="10">
+                    <StackPanel>
+                        <TextBlock Text="Download" FontSize="16" Foreground="#A6E3A1" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding DownloadSpeed, StringFormat={}{0:F2} Mbps}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Upload Speed -->
+                <Border Background="#252535" Padding="20" Margin="0,0,0,10" CornerRadius="10">
+                    <StackPanel>
+                        <TextBlock Text="Upload" FontSize="16" Foreground="#F9E2AF" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding UploadSpeed, StringFormat={}{0:F2} Mbps}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Ping & Jitter -->
+                <Border Background="#252535" Padding="20" CornerRadius="10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Ping" FontSize="16" Foreground="#89B4FA" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Ping, StringFormat={}{0:F0} ms}" FontSize="24" FontWeight="Bold" Foreground="White" Margin="0,5,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Jitter" FontSize="16" Foreground="#F38BA8" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Jitter, StringFormat={}{0:F0} ms}" FontSize="24" FontWeight="Bold" Foreground="White" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <!-- Right Column - Chart & Server -->
+            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                <!-- Speed Chart -->
+                <Border Background="#252535" Padding="20" Margin="0,0,0,10" CornerRadius="10">
+                    <StackPanel>
+                        <TextBlock Text="Geschwindigkeits-Übersicht" FontSize="16" Foreground="White" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <lvc:CartesianChart Height="200" Series="{Binding SpeedSeries}" LegendLocation="Top">
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Title="Test" Labels="Download, Upload">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="1"/>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis Title="Mbps" LabelFormatter="{Binding YFormatter}">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="10"/>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+                    </StackPanel>
+                </Border>
+
+                <!-- Server Selection -->
+                <Border Background="#252535" Padding="20" CornerRadius="10">
+                    <StackPanel>
+                        <TextBlock Text="Test-Server" FontSize="16" Foreground="White" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <ComboBox ItemsSource="{Binding Servers}" SelectedItem="{Binding SelectedServer}" 
+                                  Background="#313244" Foreground="White" BorderBrush="#45475A" Padding="10"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Footer - Start Button & Progress -->
+        <Border Grid.Row="2" Background="#252535" Padding="20" Margin="10" CornerRadius="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Status & Progress -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{Binding TestStatus}" FontSize="16" Foreground="White" FontWeight="Bold"/>
+                    <ProgressBar Height="8" Margin="0,10,0,0" Value="{Binding TestProgress}" Maximum="100" 
+                               Background="#313244" Foreground="#89B4FA"/>
+                </StackPanel>
+
+                <!-- Start Button -->
+                <Button Grid.Column="1" Content="Speed Test starten" 
+                        Background="#89B4FA" Foreground="#1E1E2E" FontSize="16" FontWeight="Bold"
+                        Padding="20,10" BorderThickness="0" Cursor="Hand"
+                        Command="{Binding StartTestCommand}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

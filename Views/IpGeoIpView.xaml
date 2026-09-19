@@ -1,0 +1,242 @@
+<UserControl x:Class="NetworkSharp.Views.IpGeoIpView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NetworkSharp.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="IP &amp; Standort" Style="{StaticResource TitleStyle}"/>
+            <TextBlock Text="Öffentliche Adresse und Herkunft deiner Verbindung" Style="{StaticResource SubtitleStyle}"/>
+            
+            <!-- Main Content Grid -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="400"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Left Column - IP Information -->
+                <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                    <!-- Public IP Card -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Öffentliche IPv4" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                            <TextBlock Text="{Binding PublicIPv4}" FontSize="32" FontWeight="Bold" 
+                                       Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                            <TextBlock FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,4,0,0">
+                                <Run Text="IPv6: "/>
+                                <Run Text="{Binding PublicIPv6}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- GeoIP Information Card -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Provider, Land, Stadt, Zeitzone" FontSize="12" 
+                                       Foreground="{StaticResource TextSecondary}" Margin="0,0,0,8"/>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Grid.Column="0" Text="Provider:" FontSize="13" 
+                                           Foreground="{StaticResource TextSecondary}" Margin="0,0,16,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Provider}" FontSize="13" 
+                                           Foreground="{StaticResource TextPrimary}"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Grid.Column="0" Text="Land:" FontSize="13" 
+                                           Foreground="{StaticResource TextSecondary}" Margin="0,0,16,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Country}" FontSize="13" 
+                                           Foreground="{StaticResource TextPrimary}"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Grid.Column="0" Text="Stadt:" FontSize="13" 
+                                           Foreground="{StaticResource TextSecondary}" Margin="0,0,16,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding City}" FontSize="13" 
+                                           Foreground="{StaticResource TextPrimary}"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Grid.Column="0" Text="Zeitzone:" FontSize="13" 
+                                           Foreground="{StaticResource TextSecondary}" Margin="0,0,16,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Timezone}" FontSize="13" 
+                                           Foreground="{StaticResource TextPrimary}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Local Network Card -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Lokal" FontSize="12" Foreground="{StaticResource TextSecondary}" 
+                                       Margin="0,0,0,8"/>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Grid.Column="0" Text="IP:" FontSize="13" 
+                                           Foreground="{StaticResource TextSecondary}" Margin="0,0,16,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding LocalIP}" FontSize="13" 
+                                           Foreground="{StaticResource TextPrimary}"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Grid.Column="0" Text="Gateway:" FontSize="13" 
+                                           Foreground="{StaticResource TextSecondary}" Margin="0,0,16,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Gateway}" FontSize="13" 
+                                           Foreground="{StaticResource TextPrimary}"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Grid.Column="0" Text="DNS:" FontSize="13" 
+                                           Foreground="{StaticResource TextSecondary}" Margin="0,0,16,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding DnsServer}" FontSize="13" 
+                                           Foreground="{StaticResource TextPrimary}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Refresh Button -->
+                    <Button Content="Aktualisieren" Style="{StaticResource ButtonStyle}" 
+                            Height="36" Width="150" HorizontalAlignment="Left" Click="Refresh_Click"/>
+                </StackPanel>
+                
+                <!-- Right Column - Map -->
+                <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Ungefährer Standort laut GeoIP" FontSize="14" 
+                                   Foreground="{StaticResource TextSecondary}" Margin="0,0,0,16"/>
+                        
+                        <!-- Abstract World Map Representation -->
+                        <Border Height="300" Background="#1E1E2E" CornerRadius="8" BorderBrush="#45475A" 
+                                BorderThickness="1">
+                            <Grid>
+                                <!-- Dot pattern background -->
+                                <Canvas>
+                                    <!-- Create a simple dot pattern to represent a world map -->
+                                    <!-- This is a simplified representation - in production you'd use a real map control -->
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="50" Canvas.Top="80"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="60" Canvas.Top="75"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="70" Canvas.Top="85"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="80" Canvas.Top="70"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="90" Canvas.Top="90"/>
+                                    
+                                    <!-- Europe area -->
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="180" Canvas.Top="60"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="190" Canvas.Top="55"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="200" Canvas.Top="65"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="210" Canvas.Top="50"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="220" Canvas.Top="70"/>
+                                    
+                                    <!-- Asia area -->
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="250" Canvas.Top="80"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="260" Canvas.Top="75"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="270" Canvas.Top="85"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="280" Canvas.Top="70"/>
+                                    
+                                    <!-- Africa area -->
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="190" Canvas.Top="150"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="200" Canvas.Top="145"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="210" Canvas.Top="155"/>
+                                    
+                                    <!-- Australia area -->
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="290" Canvas.Top="200"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="300" Canvas.Top="195"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="310" Canvas.Top="205"/>
+                                    
+                                    <!-- South America area -->
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="80" Canvas.Top="180"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="90" Canvas.Top="175"/>
+                                    <Ellipse Width="4" Height="4" Fill="#45475A" Canvas.Left="100" Canvas.Top="185"/>
+                                    
+                                    <!-- Location marker (approximately Germany/Europe) -->
+                                    <Ellipse Width="12" Height="12" Fill="{StaticResource AccentColor}" Canvas.Left="200" Canvas.Top="60">
+                                        <Ellipse.RenderTransform>
+                                            <ScaleTransform ScaleX="1.5" ScaleY="1.5">
+                                                <ScaleTransform.CenterX>6</ScaleTransform.CenterX>
+                                                <ScaleTransform.CenterY>6</ScaleTransform.CenterY>
+                                            </ScaleTransform>
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                    
+                                    <!-- Pulse animation rings -->
+                                    <Ellipse Width="20" Height="20" Stroke="{StaticResource AccentColor}" StrokeThickness="1" 
+                                             Canvas.Left="196" Canvas.Top="56" Opacity="0.5">
+                                        <Ellipse.Triggers>
+                                            <EventTrigger RoutedEvent="Loaded">
+                                                <BeginStoryboard>
+                                                    <Storyboard RepeatBehavior="Forever">
+                                                        <DoubleAnimation Storyboard.TargetProperty="Width" 
+                                                                       From="20" To="40" Duration="0:0:2"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Height" 
+                                                                       From="20" To="40" Duration="0:0:2"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" 
+                                                                       From="0.5" To="0" Duration="0:0:2"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Ellipse.Triggers>
+                                    </Ellipse>
+                                </Canvas>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- Coordinates -->
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Grid.Column="0" Text="Koordinaten:" FontSize="12" 
+                                       Foreground="{StaticResource TextSecondary}" Margin="0,0,16,0"/>
+                            <TextBlock Grid.Column="1" FontSize="12" Foreground="{StaticResource TextPrimary}">
+                                <Run Text="{Binding Latitude, StringFormat={}{0:F4}}"/>
+                                <Run Text=", "/>
+                                <Run Text="{Binding Longitude, StringFormat={}{0:F4}}"/>
+                            </TextBlock>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

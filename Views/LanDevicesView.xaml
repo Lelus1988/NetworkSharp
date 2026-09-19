@@ -1,0 +1,169 @@
+<UserControl x:Class="NetworkSharp.Views.LanDevicesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NetworkSharp.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="LAN-Geräte" Style="{StaticResource TitleStyle}"/>
+                    <TextBlock Text="Alle Geräte im Heimnetz" Style="{StaticResource SubtitleStyle}"/>
+                </StackPanel>
+                
+                <Button Grid.Column="1" Content="Neu scannen" Style="{StaticResource ButtonStyle}" 
+                        Height="36" Width="120" Click="StartScan_Click"/>
+            </Grid>
+            
+            <!-- Summary Cards -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Text="Online" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="{Binding DevicesFound, StringFormat={}{0} Geräte}" FontSize="24" FontWeight="Bold" 
+                                   Foreground="{StaticResource SuccessColor}" Margin="0,4"/>
+                    </StackPanel>
+                </Border>
+                
+                <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0">
+                    <StackPanel>
+                        <TextBlock Text="Gateway" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="{Binding GatewayIP}" FontSize="24" FontWeight="Bold" 
+                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                    </StackPanel>
+                </Border>
+                
+                <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Subnetz" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="{Binding Subnet}" FontSize="24" FontWeight="Bold" 
+                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            
+            <!-- Device List -->
+            <Border Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Table Header -->
+                    <Grid Grid.Row="0" Height="40" Background="#45475A" Margin="-16,-16,-16,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Column="0" Text="Gerät" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" Margin="16,0,0,0"/>
+                        <TextBlock Grid.Column="1" Text="Typ" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="IP-Adresse" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="3" Text="MAC-Adresse" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="4" Text="Hersteller" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="5" Text="Status" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                    </Grid>
+                    
+                    <!-- Table Content -->
+                    <ScrollViewer Grid.Row="1" MaxHeight="400" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding Devices}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Height="50" Margin="0,0,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <!-- Device Name -->
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="16,0,0,0">
+                                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Medium" 
+                                                       Foreground="{StaticResource TextPrimary}"/>
+                                            <TextBlock Text="Dieser PC" FontSize="11" Foreground="{StaticResource TextSecondary}" 
+                                                       Visibility="{Binding IsThisPC, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                        </StackPanel>
+                                        
+                                        <!-- Device Type -->
+                                        <TextBlock Grid.Column="1" Text="{Binding Type}" FontSize="13" 
+                                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                        
+                                        <!-- IP Address -->
+                                        <TextBlock Grid.Column="2" Text="{Binding IPAddress}" FontSize="13" 
+                                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                        
+                                        <!-- MAC Address -->
+                                        <TextBlock Grid.Column="3" Text="{Binding MacAddress}" FontSize="13" 
+                                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                        
+                                        <!-- Manufacturer -->
+                                        <TextBlock Grid.Column="4" Text="{Binding Manufacturer}" FontSize="13" 
+                                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                        
+                                        <!-- Status -->
+                                        <StackPanel Grid.Column="5" VerticalAlignment="Center">
+                                            <TextBlock FontSize="13" Foreground="{StaticResource SuccessColor}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} ms">
+                                                        <Binding Path="ResponseTime"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ResponseTime}" Value="0">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ResponseTime}" Value="-1">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <Ellipse Width="8" Height="8" Fill="{StaticResource SuccessColor}" 
+                                                     Visibility="{Binding ResponseTime, Converter={StaticResource ZeroToVisibilityConverter}}"/>
+                                            <TextBlock Text="Standby" FontSize="13" Foreground="{StaticResource WarningColor}" 
+                                                       Visibility="{Binding Status, Converter={StaticResource StandbyToVisibilityConverter}}"/>
+                                            <TextBlock Text="Neu!" FontSize="13" Foreground="{StaticResource ErrorColor}" 
+                                                       Visibility="{Binding Status, Converter={StaticResource NewToVisibilityConverter}}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

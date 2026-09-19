@@ -1,0 +1,139 @@
+<UserControl x:Class="NetworkSharp.Views.DnsTesterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NetworkSharp.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="DNS-Tester" Style="{StaticResource TitleStyle}"/>
+            <TextBlock Text="Antwortzeiten verschiedener DNS-Server vergleichen" Style="{StaticResource SubtitleStyle}"/>
+            
+            <!-- Input Section -->
+            <Border Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Domain Input -->
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                        <TextBlock Text="Domain" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Domain, UpdateSourceTrigger=PropertyChanged}" 
+                                 Height="36" Padding="8" Background="#45475A" Foreground="{StaticResource TextPrimary}"
+                                 BorderThickness="0" FontSize="14"/>
+                    </StackPanel>
+                    
+                    <!-- Record Type Dropdown -->
+                    <StackPanel Grid.Column="1" Margin="0,0,16,0">
+                        <TextBlock Text="Typ" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,4"/>
+                        <ComboBox ItemsSource="{Binding RecordTypes}" SelectedItem="{Binding RecordType}" 
+                                  Height="36" Background="#45475A" Foreground="{StaticResource TextPrimary}"
+                                  BorderThickness="0" FontSize="14" Padding="8"/>
+                    </StackPanel>
+                    
+                    <!-- Test Button -->
+                    <Button Grid.Column="2" Content="Testen" Style="{StaticResource ButtonStyle}" 
+                            Height="36" Width="100" VerticalAlignment="Bottom" Click="StartTest_Click"/>
+                </Grid>
+            </Border>
+            
+            <!-- Results Table -->
+            <Border Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Table Header -->
+                    <Grid Grid.Row="0" Height="40" Background="#45475A" Margin="-16,-16,-16,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Column="0" Text="#" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" Margin="16,0,0,0"/>
+                        <TextBlock Grid.Column="1" Text="Server" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="Adresse" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="3" Text="Antwortzeit" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="4" Text="Ergebnis" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                    </Grid>
+                    
+                    <!-- Table Content -->
+                    <ScrollViewer Grid.Row="1" MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding TestResults}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Height="50" Margin="0,0,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <!-- Rank -->
+                                        <TextBlock Grid.Column="0" Text="{Binding Rank}" FontSize="13" 
+                                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" 
+                                                   Margin="16,0,0,0"/>
+                                        
+                                        <!-- Server Name -->
+                                        <TextBlock Grid.Column="1" Text="{Binding Server.Name}" FontSize="13" 
+                                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                        
+                                        <!-- Server Address -->
+                                        <TextBlock Grid.Column="2" Text="{Binding Server.Address}" FontSize="13" 
+                                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                        
+                                        <!-- Response Time with Progress Bar -->
+                                        <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                
+                                                <ProgressBar Grid.Column="0" Height="4" Margin="0,0,8,0" 
+                                                             Value="{Binding ResponseTime}" Maximum="100"
+                                                             Foreground="{StaticResource AccentColor}" Background="#45475A"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding ResponseTime, StringFormat={}{0} ms}" 
+                                                           FontSize="13" Foreground="{StaticResource TextPrimary}"/>
+                                            </Grid>
+                                        </StackPanel>
+                                        
+                                        <!-- Result -->
+                                        <TextBlock Grid.Column="4" Text="{Binding Result}" FontSize="13" 
+                                                   Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+            
+            <!-- Summary Box -->
+            <Border Style="{StaticResource CardStyle}" BorderBrush="{StaticResource SuccessColor}" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock Text="{Binding SummaryMessage}" FontSize="14" Foreground="{StaticResource TextPrimary}" 
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
