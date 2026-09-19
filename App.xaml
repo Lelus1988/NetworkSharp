@@ -16,24 +16,33 @@
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
             <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
-            <!-- Dark Theme Colors -->
-            <SolidColorBrush x:Key="BackgroundDark" Color="#1E1E2E"/>
-            <SolidColorBrush x:Key="BackgroundSidebar" Color="#181825"/>
-            <SolidColorBrush x:Key="BackgroundCard" Color="#313244"/>
-            <SolidColorBrush x:Key="AccentColor" Color="#89B4FA"/>
-            <SolidColorBrush x:Key="AccentHover" Color="#B4BEFE"/>
-            <SolidColorBrush x:Key="TextPrimary" Color="#CDD6F4"/>
-            <SolidColorBrush x:Key="TextSecondary" Color="#A6ADC8"/>
-            <SolidColorBrush x:Key="TextMuted" Color="#6C7086"/>
-            <SolidColorBrush x:Key="SuccessColor" Color="#A6E3A1"/>
-            <SolidColorBrush x:Key="WarningColor" Color="#F9E2AF"/>
-            <SolidColorBrush x:Key="ErrorColor" Color="#F38BA8"/>
-            <SolidColorBrush x:Key="GraphDownload" Color="#89DCEB"/>
-            <SolidColorBrush x:Key="GraphUpload" Color="#CBA6F7"/>
+            <!-- Network console theme -->
+            <SolidColorBrush x:Key="BackgroundDark" Color="#0B1118"/>
+            <SolidColorBrush x:Key="BackgroundSidebar" Color="#0D1721"/>
+            <SolidColorBrush x:Key="BackgroundCard" Color="#142330"/>
+            <SolidColorBrush x:Key="BackgroundPanel" Color="#10202C"/>
+            <SolidColorBrush x:Key="AccentColor" Color="#22D3EE"/>
+            <SolidColorBrush x:Key="AccentHover" Color="#67E8F9"/>
+            <SolidColorBrush x:Key="AccentDeep" Color="#0E7490"/>
+            <SolidColorBrush x:Key="TextPrimary" Color="#E6F7FA"/>
+            <SolidColorBrush x:Key="TextSecondary" Color="#8FAAB7"/>
+            <SolidColorBrush x:Key="TextMuted" Color="#55707D"/>
+            <SolidColorBrush x:Key="SuccessColor" Color="#4ADE80"/>
+            <SolidColorBrush x:Key="WarningColor" Color="#FBBF24"/>
+            <SolidColorBrush x:Key="ErrorColor" Color="#FB7185"/>
+            <SolidColorBrush x:Key="GraphDownload" Color="#22D3EE"/>
+            <SolidColorBrush x:Key="GraphUpload" Color="#A78BFA"/>
+            <SolidColorBrush x:Key="GridLine" Color="#1B3645"/>
+
+            <LinearGradientBrush x:Key="WindowGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#0B1118" Offset="0"/>
+                <GradientStop Color="#0D1A24" Offset="0.55"/>
+                <GradientStop Color="#101F2B" Offset="1"/>
+            </LinearGradientBrush>
             
             <!-- Font Styles -->
             <Style x:Key="TitleStyle" TargetType="TextBlock">
-                <Setter Property="FontSize" Value="24"/>
+                <Setter Property="FontSize" Value="26"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
             </Style>
@@ -46,23 +55,26 @@
             
             <Style x:Key="CardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{StaticResource BackgroundCard}"/>
-                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="BorderBrush" Value="{StaticResource GridLine}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="6"/>
                 <Setter Property="Padding" Value="16"/>
                 <Setter Property="Margin" Value="0,0,0,16"/>
             </Style>
             
             <Style x:Key="ButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{StaticResource AccentColor}"/>
-                <Setter Property="Foreground" Value="#1E1E2E"/>
+                <Setter Property="Foreground" Value="#071117"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="Padding" Value="16,8"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}"
-                                    CornerRadius="4"
+                                <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="3"
                                     Padding="{TemplateBinding Padding}">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -73,7 +85,40 @@
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Background" Value="{StaticResource AccentHover}"/>
                     </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Opacity" Value="0.82"/>
+                    </Trigger>
                 </Style.Triggers>
+            </Style>
+
+            <Style x:Key="NavButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="14,0"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="NavBorder" Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="NavBorder" Property="Background" Value="#173342"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="NavBorder" Property="Opacity" Value="0.75"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter TargetName="NavBorder" Property="Background" Value="#173342"/>
+                                    <Setter TargetName="NavBorder" Property="BorderBrush" Value="{StaticResource AccentDeep}"/>
+                                    <Setter TargetName="NavBorder" Property="BorderThickness" Value="1"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

@@ -6,17 +6,17 @@
         xmlns:local="clr-namespace:NetworkSharp"
         xmlns:views="clr-namespace:NetworkSharp.Views"
         mc:Ignorable="d"
-        Title="Network# - NetworkSharp" Height="720" Width="1280" MinHeight="600" MinWidth="1000"
-        Background="{StaticResource BackgroundDark}"
+        Title="NetworkSharp 2.0" Height="760" Width="1360" MinHeight="620" MinWidth="1040"
+        Background="{StaticResource WindowGradient}"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="258"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
         <!-- Sidebar Navigation -->
-        <Border Grid.Column="0" Background="{StaticResource BackgroundSidebar}">
+        <Border Grid.Column="0" Background="{StaticResource BackgroundSidebar}" BorderBrush="{StaticResource GridLine}" BorderThickness="0,0,1,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -25,10 +25,30 @@
                 </Grid.RowDefinitions>
                 
                 <!-- Logo/Title -->
-                <Border Grid.Row="0" Padding="20" Background="#11111B">
+                <Border Grid.Row="0" Padding="22,24" Background="#0A141D">
                     <StackPanel>
-                        <TextBlock Text="Network#" FontSize="28" FontWeight="Bold" Foreground="{StaticResource AccentColor}"/>
-                        <TextBlock Text="NetworkSharp" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="12" Height="12" CornerRadius="6" Background="{StaticResource SuccessColor}"
+                                    VerticalAlignment="Center" Margin="0,0,10,0">
+                                <Border.Triggers>
+                                    <EventTrigger RoutedEvent="Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.35" Duration="0:0:1.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Border.Triggers>
+                            </Border>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="NETWORKSHARP" FontSize="19" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                                <TextBlock Text="NETWORK CONSOLE" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource AccentColor}" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
                 </Border>
                 
@@ -37,15 +57,12 @@
                     <ItemsControl x:Name="NavigationItems">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button x:Name="NavButton" 
+                                <Button x:Name="NavButton"
+                                    Style="{StaticResource NavButtonStyle}"
                                         Click="NavButton_Click"
                                         Tag="{Binding Name}"
-                                        Height="50" 
-                                        Margin="8,4"
-                                        HorizontalContentAlignment="Left"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Padding="16,0">
+                                    Height="46"
+                                    Margin="12,3">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -55,54 +72,19 @@
                                         <!-- Icon placeholder - would use proper icons in production -->
                                         <TextBlock Grid.Column="0" 
                                                    Text="{Binding Icon}" 
-                                                   FontSize="18" 
+                                                   FontSize="16"
                                                    Foreground="{StaticResource TextSecondary}"
-                                                   Margin="0,0,12,0"
+                                                   Margin="2,0,13,0"
                                                    VerticalAlignment="Center"/>
                                         
                                         <TextBlock Grid.Column="1" 
                                                    Text="{Binding DisplayName}" 
-                                                   FontSize="14" 
+                                                   FontSize="13"
                                                    Foreground="{StaticResource TextPrimary}"
+                                                   FontWeight="SemiBold"
                                                    VerticalAlignment="Center"/>
                                     </Grid>
                                     
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border x:Name="ButtonBorder" 
-                                                                Background="Transparent" 
-                                                                CornerRadius="4">
-                                                            <Grid>
-                                                                <!-- Selection indicator -->
-                                                                <Border x:Name="SelectionIndicator" 
-                                                                        Width="4" 
-                                                                        Height="30" 
-                                                                        Background="{StaticResource AccentColor}" 
-                                                                HorizontalAlignment="Left" 
-                                                                Margin="8,0" 
-                                                                Visibility="Collapsed"/>
-                                                                
-                                                                <ContentPresenter HorizontalAlignment="Stretch" 
-                                                                                Margin="16,0,0,0"/>
-                                                            </Grid>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="Background" TargetName="ButtonBorder" Value="#313244"/>
-                                                            </Trigger>
-                                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                                <Setter Property="Background" TargetName="ButtonBorder" Value="#313244"/>
-                                                                <Setter Property="Visibility" TargetName="SelectionIndicator" Value="Visible"/>
-                                                            </DataTrigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </Button.Style>
                                 </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -110,18 +92,45 @@
                 </ScrollViewer>
                 
                 <!-- Footer -->
-                <Border Grid.Row="2" Padding="20" Background="#11111B">
+                <Border Grid.Row="2" Padding="22,18" Background="#0A141D" BorderBrush="{StaticResource GridLine}" BorderThickness="0,1,0,0">
                     <StackPanel>
-                        <TextBlock Text="NetworkSharp 1.0" FontSize="12" Foreground="{StaticResource TextMuted}"/>
-                        <TextBlock Text="Ethernet verbunden" FontSize="11" Foreground="{StaticResource SuccessColor}" Margin="0,4,0,0"/>
+                        <TextBlock Text="NETWORKSHARP 2.0" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}"/>
+                        <TextBlock Text="● SYSTEM ONLINE" FontSize="10" Foreground="{StaticResource SuccessColor}" Margin="0,6,0,0"/>
                     </StackPanel>
                 </Border>
             </Grid>
         </Border>
         
         <!-- Main Content Area -->
-        <Border Grid.Column="1" Padding="32">
-            <ContentControl x:Name="MainContent"/>
+        <Border Grid.Column="1" Padding="30,24,34,30" Background="{StaticResource WindowGradient}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="48"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Margin="0,0,0,18">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="/" FontSize="22" FontWeight="Bold" Foreground="{StaticResource AccentColor}" Margin="0,0,8,0"/>
+                        <TextBlock Text="LIVE NETWORK TELEMETRY" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <TextBlock Text="LOCAL NODE" FontSize="10" Foreground="{StaticResource TextMuted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="● READY" FontSize="10" Foreground="{StaticResource SuccessColor}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+                <Border Grid.Row="1" Background="#0D1822" BorderBrush="{StaticResource GridLine}" BorderThickness="1" CornerRadius="8" Padding="22">
+                    <Border.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.35"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Border.Triggers>
+                    <ContentControl x:Name="MainContent"/>
+                </Border>
+            </Grid>
         </Border>
     </Grid>
 </Window>

@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using Microsoft.Extensions.DependencyInjection;
 using NetworkSharp.ViewModels;
 using NetworkSharp.Views;
@@ -115,12 +117,32 @@ namespace NetworkSharp
                 if (view != null)
                 {
                     MainContent.Content = view;
+                    AnimateContent(view);
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading view: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private static void AnimateContent(UIElement content)
+        {
+            content.RenderTransform = new TranslateTransform(12, 0);
+            content.Opacity = 0;
+
+            var storyboard = new Storyboard();
+            var opacityAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(280));
+            Storyboard.SetTarget(opacityAnimation, content);
+            Storyboard.SetTargetProperty(opacityAnimation, new PropertyPath(UIElement.OpacityProperty));
+
+            var slideAnimation = new DoubleAnimation(12, 0, TimeSpan.FromMilliseconds(280));
+            Storyboard.SetTarget(slideAnimation, content);
+            Storyboard.SetTargetProperty(slideAnimation, new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
+
+            storyboard.Children.Add(opacityAnimation);
+            storyboard.Children.Add(slideAnimation);
+            storyboard.Begin();
         }
 
         private IServiceProvider ConfigureServices()
