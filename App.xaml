@@ -221,6 +221,81 @@
                 <Setter Property="Padding" Value="10,8"/>
             </Style>
 
+            <Style x:Key="ScrollBarButtonStyle" TargetType="RepeatButton">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="IsTabStop" Value="False"/>
+                <Setter Property="Opacity" Value="0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RepeatButton">
+                            <Border Background="Transparent"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="ScrollBarThumbStyle" TargetType="Thumb">
+                <Setter Property="Background" Value="#6B7C88"/>
+                <Setter Property="MinHeight" Value="34"/>
+                <Setter Property="MinWidth" Value="6"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Thumb">
+                            <Border x:Name="ThumbBorder" Background="{TemplateBinding Background}"
+                                    CornerRadius="5" Margin="2"/>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ThumbBorder" Property="Background" Value="#A8B4BB"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="ScrollBar">
+                <Setter Property="Width" Value="10"/>
+                <Setter Property="Height" Value="10"/>
+                <Setter Property="Background" Value="#0C1822"/>
+                <Setter Property="Foreground" Value="#6B7C88"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Track x:Name="PART_Track" Orientation="{TemplateBinding Orientation}"
+                                       IsDirectionReversed="True">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton x:Name="DecreaseButton"
+                                                      Style="{StaticResource ScrollBarButtonStyle}"
+                                                      Command="ScrollBar.LineUpCommand"
+                                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource ScrollBarThumbStyle}"
+                                               Background="{TemplateBinding Foreground}"/>
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton x:Name="IncreaseButton"
+                                                      Style="{StaticResource ScrollBarButtonStyle}"
+                                                      Command="ScrollBar.LineDownCommand"
+                                                      CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Orientation" Value="Horizontal">
+                                    <Setter Property="Width" Value="Auto"/>
+                                    <Setter Property="Height" Value="10"/>
+                                    <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="False"/>
+                                    <Setter TargetName="DecreaseButton" Property="Command" Value="ScrollBar.LineLeftCommand"/>
+                                    <Setter TargetName="IncreaseButton" Property="Command" Value="ScrollBar.LineRightCommand"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <Style x:Key="NavButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
