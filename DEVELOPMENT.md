@@ -105,7 +105,8 @@ NetworkSharp/
 │   ├── DnsTesterView.xaml            # DNS-Tester-Oberfläche
 │   ├── SpeedTestView.xaml            # Speed-Test-Oberfläche
 │   ├── IpGeoIpView.xaml              # IP- und Standort-Oberfläche
-│   └── WlanProfilesView.xaml          # WLAN-Profil-Oberfläche
+│   ├── WlanProfilesView.xaml          # WLAN-Profil-Oberfläche
+│   └── StartupGateWindow.xaml        # Nutzungs- und Update-Dialog
 │
 ├── NetworkSharp.Tests/               # xUnit-Tests
 │   ├── NetworkAddressHelperTests.cs  # Tests für IP-/Subnetzberechnung

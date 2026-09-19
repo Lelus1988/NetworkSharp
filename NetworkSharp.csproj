@@ -8,9 +8,9 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>NetworkSharp</AssemblyName>
     <RootNamespace>NetworkSharp</RootNamespace>
-    <Version>2.2.0</Version>
-    <AssemblyVersion>2.2.0.0</AssemblyVersion>
-    <FileVersion>2.2.0.0</FileVersion>
+    <Version>2.2.1</Version>
+    <AssemblyVersion>2.2.1.0</AssemblyVersion>
+    <FileVersion>2.2.1.0</FileVersion>
     <NoWarn>$(NoWarn);NU1701</NoWarn>
     <RestoreNoWarn>$(RestoreNoWarn);NU1701</RestoreNoWarn>
     <DefaultItemExcludes>$(DefaultItemExcludes);NetworkSharp.Tests\**\*</DefaultItemExcludes>
