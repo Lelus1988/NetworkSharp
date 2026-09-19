@@ -33,6 +33,14 @@
             <SolidColorBrush x:Key="GraphDownload" Color="#22D3EE"/>
             <SolidColorBrush x:Key="GraphUpload" Color="#A78BFA"/>
             <SolidColorBrush x:Key="GridLine" Color="#1B3645"/>
+            <SolidColorBrush x:Key="InputBackground" Color="#0E1B27"/>
+            <SolidColorBrush x:Key="InputBorder" Color="#28536D"/>
+            <SolidColorBrush x:Key="InputFocusBorder" Color="#22D3EE"/>
+
+            <LinearGradientBrush x:Key="ButtonGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#22D3EE" Offset="0"/>
+                <GradientStop Color="#168AAD" Offset="1"/>
+            </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="WindowGradient" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#0B1118" Offset="0"/>
@@ -63,10 +71,10 @@
             </Style>
             
             <Style x:Key="ButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource AccentColor}"/>
-                <Setter Property="Foreground" Value="#071117"/>
+                <Setter Property="Background" Value="{StaticResource ButtonGradient}"/>
+                <Setter Property="Foreground" Value="#061218"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
-                <Setter Property="Padding" Value="16,8"/>
+                <Setter Property="Padding" Value="16,9"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
@@ -74,7 +82,9 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}"
-                                    CornerRadius="3"
+                                        CornerRadius="9"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
                                     Padding="{TemplateBinding Padding}">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -83,12 +93,56 @@
                 </Setter>
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{StaticResource AccentHover}"/>
+                        <Setter Property="Background" Value="#67E8F9"/>
                     </Trigger>
                     <Trigger Property="IsPressed" Value="True">
                         <Setter Property="Opacity" Value="0.82"/>
                     </Trigger>
                 </Style.Triggers>
+            </Style>
+
+            <Style TargetType="TextBox">
+                <Setter Property="Background" Value="{StaticResource InputBackground}"/>
+                <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="11,8"/>
+                <Setter Property="CaretBrush" Value="{StaticResource AccentColor}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border x:Name="InputBorder" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                <ScrollViewer x:Name="PART_ContentHost"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter TargetName="InputBorder" Property="BorderBrush" Value="{StaticResource InputFocusBorder}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="InputBorder" Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="ComboBox">
+                <Setter Property="Background" Value="{StaticResource InputBackground}"/>
+                <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="11,8"/>
+                <Setter Property="Height" Value="36"/>
+            </Style>
+
+            <Style TargetType="ComboBoxItem">
+                <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                <Setter Property="Background" Value="{StaticResource BackgroundPanel}"/>
+                <Setter Property="Padding" Value="10,8"/>
             </Style>
 
             <Style x:Key="NavButtonStyle" TargetType="Button">

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:NetworkSharp"
         xmlns:views="clr-namespace:NetworkSharp.Views"
         mc:Ignorable="d"
-        Title="NetworkSharp 2.0" Height="760" Width="1360" MinHeight="620" MinWidth="1040"
+        Title="NetworkSharp 2.1" Height="760" Width="1360" MinHeight="620" MinWidth="1040"
         Background="{StaticResource WindowGradient}"
         WindowStartupLocation="CenterScreen">
     <Grid>
@@ -26,30 +26,25 @@
                 
                 <!-- Logo/Title -->
                 <Border Grid.Row="0" Padding="22,24" Background="#0A141D">
-                    <StackPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="12" Height="12" CornerRadius="6" Background="{StaticResource SuccessColor}"
-                                    VerticalAlignment="Center" Margin="0,0,10,0">
-                                <Border.Triggers>
-                                    <EventTrigger RoutedEvent="Loaded">
-                                        <BeginStoryboard>
-                                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.35" Duration="0:0:1.2"/>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </Border.Triggers>
-                            </Border>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="NETWORKSHARP" FontSize="19" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
-                                <TextBlock Text="NETWORK CONSOLE" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource AccentColor}" Margin="0,3,0,0"/>
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
+                    <Grid Width="196" Height="62" HorizontalAlignment="Left">
+                        <TextBlock Text="#" FontSize="62" FontWeight="Bold" Foreground="{StaticResource AccentColor}"
+                                   Opacity="0.22" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                   Margin="2,-10,0,0"/>
+                        <TextBlock Text="Network#" FontSize="13" FontWeight="Bold" Foreground="{StaticResource AccentColor}"
+                                   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,11"
+                                   RenderTransformOrigin="0.5,0.5">
+                            <TextBlock.RenderTransform>
+                                <RotateTransform Angle="-8"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                        <TextBlock Text="NetworkSharp" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextSecondary}"
+                                   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="16,17,0,0"
+                                   RenderTransformOrigin="0.5,0.5">
+                            <TextBlock.RenderTransform>
+                                <RotateTransform Angle="-8"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                    </Grid>
                 </Border>
                 
                 <!-- Navigation Items -->
@@ -94,7 +89,7 @@
                 <!-- Footer -->
                 <Border Grid.Row="2" Padding="22,18" Background="#0A141D" BorderBrush="{StaticResource GridLine}" BorderThickness="0,1,0,0">
                     <StackPanel>
-                        <TextBlock Text="NETWORKSHARP 2.0" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}"/>
+                        <TextBlock Text="NETWORKSHARP 2.1" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}"/>
                         <TextBlock Text="● SYSTEM ONLINE" FontSize="10" Foreground="{StaticResource SuccessColor}" Margin="0,6,0,0"/>
                     </StackPanel>
                 </Border>

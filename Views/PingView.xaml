@@ -1,201 +1,273 @@
 <UserControl x:Class="NetworkSharp.Views.PingView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:NetworkSharp.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-             mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1000">
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1000">
+
+    <UserControl.Resources>
+        <!-- Tipp: Farben, Verläufe und Storyboards später in App.xaml verschieben, dann teilen sich alle Views sie -->
+        <SolidColorBrush x:Key="CyanBrush" Color="#38E1D0"/>
+        <SolidColorBrush x:Key="GridBrush" Color="#22344B"/>
+        <LinearGradientBrush x:Key="CyanFill" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#6638E1D0" Offset="0"/>
+            <GradientStop Color="#0038E1D0" Offset="1"/>
+        </LinearGradientBrush>
+
+        <Storyboard x:Key="FadeIn">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.5"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" To="0" Duration="0:0:0.55">
+                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Key="FadeInLate" BeginTime="0:0:0.15">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.5"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" To="0" Duration="0:0:0.55">
+                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <!-- Pulsierender "Live"-Punkt, nur sichtbar während gepingt wird -->
+        <Style x:Key="LiveDot" TargetType="Ellipse">
+            <Setter Property="Width" Value="9"/>
+            <Setter Property="Height" Value="9"/>
+            <Setter Property="Fill" Value="#4ADE80"/>
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsPinging}" Value="True">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="pulse">
+                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.25" Duration="0:0:0.8"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions><StopStoryboard BeginStoryboardName="pulse"/></DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel>
-            <!-- Header -->
             <TextBlock Text="Ping" Style="{StaticResource TitleStyle}"/>
             <TextBlock Text="Latenz zu einem Ziel in Echtzeit" Style="{StaticResource SubtitleStyle}"/>
-            
-            <!-- Input Section -->
+
+            <!-- Eingabe -->
             <Border Style="{StaticResource CardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    
-                    <!-- Target Input -->
+
                     <StackPanel Grid.Column="0" Margin="0,0,16,0">
                         <TextBlock Text="Ziel" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,4"/>
-                        <TextBox Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" 
-                                 Height="36" Padding="8" Background="#45475A" Foreground="{StaticResource TextPrimary}"
-                                 BorderThickness="0" FontSize="14"/>
+                        <TextBox Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" Height="36" FontSize="14"/>
                     </StackPanel>
-                    
-                    <!-- Interval Display -->
+
                     <StackPanel Grid.Column="1" Margin="0,0,16,0">
                         <TextBlock Text="Intervall" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,4"/>
-                        <ComboBox ItemsSource="{Binding Intervals}" SelectedItem="{Binding IntervalDisplay}" 
-                                  Height="36" Background="#45475A" Foreground="{StaticResource TextPrimary}"
-                                  BorderThickness="0" FontSize="14" Padding="8"/>
+                        <ComboBox ItemsSource="{Binding Intervals}" SelectedItem="{Binding IntervalDisplay}"
+                                  Height="36" Width="140" FontSize="14" Padding="8"/>
                     </StackPanel>
-                    
-                    <!-- Stop Button -->
-                    <Button Grid.Column="2" Content="Stopp" Style="{StaticResource ButtonStyle}" 
+
+                    <!-- Start und Stopp teilen sich den Platz: immer nur einer sichtbar -->
+                    <Button Grid.Column="2" Content="Start" Height="36" Width="100" VerticalAlignment="Bottom"
+                            Command="{Binding StartPingCommand}"
+                            Background="{StaticResource CyanBrush}" Foreground="#06231F">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPinging}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Grid.Column="2" Content="Stopp" Style="{StaticResource ButtonStyle}"
                             Background="{StaticResource ErrorColor}" Foreground="#1E1E2E"
                             Height="36" Width="100" VerticalAlignment="Bottom" Click="StopPing_Click"
                             Visibility="{Binding IsPinging, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </Grid>
             </Border>
-            
-            <!-- Summary Statistics Cards -->
+
+            <!-- Kennzahlen -->
             <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition/><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                
+
                 <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,0">
                     <StackPanel>
                         <TextBlock Text="Aktuell" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
-                        <TextBlock Text="{Binding CurrentPing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" 
-                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                        <TextBlock Text="{Binding CurrentPing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource CyanBrush}" Margin="0,4"/>
                     </StackPanel>
                 </Border>
-                
                 <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0">
                     <StackPanel>
                         <TextBlock Text="Durchschnitt" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
-                        <TextBlock Text="{Binding AveragePing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" 
-                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                        <TextBlock Text="{Binding AveragePing, StringFormat={}{0:F0} ms}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextPrimary}" Margin="0,4"/>
                     </StackPanel>
                 </Border>
-                
                 <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="8,0">
                     <StackPanel>
                         <TextBlock Text="Minimum" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
-                        <TextBlock Text="{Binding MinimumPing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" 
-                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                        <TextBlock Text="{Binding MinimumPing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource SuccessColor}" Margin="0,4"/>
                     </StackPanel>
                 </Border>
-                
                 <Border Grid.Column="3" Style="{StaticResource CardStyle}" Margin="8,0">
                     <StackPanel>
                         <TextBlock Text="Maximum" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
-                        <TextBlock Text="{Binding MaximumPing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" 
-                                   Foreground="{StaticResource AccentColor}" Margin="0,4"/>
+                        <TextBlock Text="{Binding MaximumPing, StringFormat={}{0} ms}" FontSize="24" FontWeight="Bold" Foreground="#FFB547" Margin="0,4"/>
                     </StackPanel>
                 </Border>
-                
                 <Border Grid.Column="4" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
                     <StackPanel>
                         <TextBlock Text="Paketverlust" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
-                        <TextBlock Text="{Binding PacketLoss, StringFormat={}{0:F1} %}" FontSize="24" FontWeight="Bold" 
-                                   Foreground="{StaticResource WarningColor}" Margin="0,4"/>
+                        <TextBlock Text="{Binding PacketLoss, StringFormat={}{0:F1} %}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource ErrorColor}" Margin="0,4"/>
                     </StackPanel>
                 </Border>
             </Grid>
-            
-            <!-- Response Time Graph -->
-            <Border Style="{StaticResource CardStyle}">
+
+            <!-- Antwortzeit-Diagramm -->
+            <Border Style="{StaticResource CardStyle}" Opacity="0">
+                <Border.RenderTransform><TranslateTransform Y="16"/></Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource FadeIn}"/>
+                    </EventTrigger>
+                </Border.Triggers>
+
                 <StackPanel>
-                    <TextBlock Text="Antwortzeit (letzte 2 Minuten)" FontSize="16" FontWeight="SemiBold" 
-                               Foreground="{StaticResource TextPrimary}" Margin="0,0,0,16"/>
-                    
-                    <lvc:CartesianChart Height="250" Series="{Binding PingSeries}">
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Antwortzeit" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="24,0,0,0" VerticalAlignment="Center">
+                            <Ellipse Width="9" Height="9" Fill="{StaticResource CyanBrush}" Margin="0,0,6,0"/>
+                            <TextBlock Text="ms" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,0,16,0"/>
+                            <Line X1="0" X2="16" Y1="5" Y2="5" Stroke="#8497AE" StrokeThickness="1.5" StrokeDashArray="3 2" Margin="0,0,6,0"/>
+                            <TextBlock Text="Durchschnitt" FontSize="12" Foreground="{StaticResource TextSecondary}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Style="{StaticResource LiveDot}" Margin="0,0,6,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <lvc:CartesianChart Height="280" LegendLocation="None" Hoverable="True"
+                                        AnimationsSpeed="0:0:0.35" DisableAnimations="False">
+                        <lvc:CartesianChart.DataTooltip>
+                            <lvc:DefaultTooltip Background="#1B2B40" Foreground="#E8EEF6" BulletSize="10"
+                                                SelectionMode="SharedXValues" CornerRadius="8"/>
+                        </lvc:CartesianChart.DataTooltip>
+
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Title="Antwortzeit (ms)" Values="{Binding PingValues}"
+                                            Stroke="{StaticResource CyanBrush}" Fill="{StaticResource CyanFill}"
+                                            StrokeThickness="2.5" LineSmoothness="0.45"
+                                            PointGeometry="{x:Null}" DataLabels="False"/>
+                            <lvc:LineSeries Title="Durchschnitt (ms)" Values="{Binding AverageValues}"
+                                            Stroke="#8497AE" Fill="Transparent" StrokeThickness="1.3"
+                                            StrokeDashArray="4 4" LineSmoothness="0"
+                                            PointGeometry="{x:Null}" DataLabels="False"/>
+                        </lvc:CartesianChart.Series>
+
                         <lvc:CartesianChart.AxisX>
-                            <lvc:Axis Title="Zeit" Labels="-2:00,-1:40,-1:20,-1:00,-0:40,-0:20,jetzt">
-                                <lvc:Axis.Separator>
-                                    <lvc:Separator Step="1"/>
-                                </lvc:Axis.Separator>
+                            <lvc:Axis Labels="{Binding Labels}" FontSize="11" Foreground="{StaticResource TextMuted}">
+                                <lvc:Axis.Separator><lvc:Separator Step="20" StrokeThickness="0"/></lvc:Axis.Separator>
                             </lvc:Axis>
                         </lvc:CartesianChart.AxisX>
                         <lvc:CartesianChart.AxisY>
-                            <lvc:Axis Title="ms" MinValue="0" MaxValue="80">
+                            <lvc:Axis LabelFormatter="{Binding Formatter}" MinValue="0" FontSize="11" Foreground="{StaticResource TextMuted}">
                                 <lvc:Axis.Separator>
-                                    <lvc:Separator Step="20"/>
+                                    <lvc:Separator StrokeThickness="1" Stroke="{StaticResource GridBrush}" StrokeDashArray="3 5"/>
                                 </lvc:Axis.Separator>
                             </lvc:Axis>
                         </lvc:CartesianChart.AxisY>
                     </lvc:CartesianChart>
                 </StackPanel>
             </Border>
-            
-            <!-- Packet Status -->
-            <Border Style="{StaticResource CardStyle}">
+
+            <!-- Pakete: jedes neue Paket wächst animiert ein, verlorene sind rot -->
+            <Border Style="{StaticResource CardStyle}" Opacity="0">
+                <Border.RenderTransform><TranslateTransform Y="16"/></Border.RenderTransform>
+                <Border.Triggers>
+                    <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource FadeInLate}"/>
+                    </EventTrigger>
+                </Border.Triggers>
+
                 <StackPanel>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        
-                        <TextBlock Grid.Column="0" Text="Pakete" FontSize="16" FontWeight="SemiBold" 
-                                   Foreground="{StaticResource TextPrimary}"/>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <TextBlock Text="Pakete" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}"/>
                         <TextBlock Grid.Column="1" FontSize="14" Foreground="{StaticResource TextSecondary}">
-                            <Run Text="Verloren: "/>
-                            <Run Text="{Binding LostPackets}"/>
-                            <Run Text=" von "/>
-                            <Run Text="{Binding TotalPackets}"/>
+                            <Run Text="Verloren: "/><Run Text="{Binding LostPackets, Mode=OneWay}"/>
+                            <Run Text=" von "/><Run Text="{Binding TotalPackets, Mode=OneWay}"/>
                         </TextBlock>
                     </Grid>
-                    
-                    <!-- Packet visualization -->
-                    <ItemsControl Margin="0,16,0,0">
+
+                    <ItemsControl ItemsSource="{Binding Packets}" Margin="0,16,0,0">
                         <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel/>
-                            </ItemsPanelTemplate>
+                            <ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Width="8" Height="8" Margin="1" Background="{StaticResource SuccessColor}" 
-                                        CornerRadius="2"/>
+                                <Border x:Name="pkt" Height="30" Margin="1.5,0" CornerRadius="3"
+                                        Background="#4ADE80" Opacity="0.75" RenderTransformOrigin="0.5,1">
+                                    <Border.RenderTransform><ScaleTransform ScaleY="0"/></Border.RenderTransform>
+                                    <Border.Triggers>
+                                        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                                     To="1" Duration="0:0:0.3">
+                                                        <DoubleAnimation.EasingFunction><BackEase EasingMode="EaseOut" Amplitude="0.4"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Border.Triggers>
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Lost}" Value="True">
+                                        <Setter TargetName="pkt" Property="Background" Value="#FF6B7A"/>
+                                        <Setter TargetName="pkt" Property="Opacity" Value="1"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
             </Border>
 
-            <!-- Connection tips -->
+            <!-- Verbindung verbessern (unverändert) -->
             <Border Style="{StaticResource CardStyle}">
                 <StackPanel>
-                    <TextBlock Text="Verbindung verbessern" FontSize="16" FontWeight="SemiBold"
-                               Foreground="{StaticResource TextPrimary}" Margin="0,0,0,6"/>
+                    <TextBlock Text="Verbindung verbessern" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" Margin="0,0,0,6"/>
                     <TextBlock Text="Hohe Latenz oder Paketverlust lässt sich oft direkt an der Verbindung beheben."
-                               FontSize="12" Foreground="{StaticResource TextSecondary}"
-                               TextWrapping="Wrap" Margin="0,0,0,16"/>
-
+                               FontSize="12" Foreground="{StaticResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,16"/>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                            <TextBlock Text="WLAN" FontSize="13" FontWeight="SemiBold"
-                                       Foreground="{StaticResource AccentColor}" Margin="0,0,0,6"/>
+                            <TextBlock Text="WLAN" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource CyanBrush}" Margin="0,0,0,6"/>
                             <TextBlock Text="- Router möglichst frei und erhöht aufstellen&#10;- Für geringe Latenz 5 oder 6 GHz nutzen&#10;- Bei vielen Netzen den WLAN-Kanal wechseln"
-                                       FontSize="12" Foreground="{StaticResource TextSecondary}"
-                                       TextWrapping="Wrap"/>
+                                       FontSize="12" Foreground="{StaticResource TextSecondary}" TextWrapping="Wrap"/>
                         </StackPanel>
-
                         <StackPanel Grid.Column="1" Margin="6,0">
-                            <TextBlock Text="Ethernet" FontSize="13" FontWeight="SemiBold"
-                                       Foreground="{StaticResource SuccessColor}" Margin="0,0,0,6"/>
+                            <TextBlock Text="Ethernet" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource SuccessColor}" Margin="0,0,0,6"/>
                             <TextBlock Text="- Für Spiele und wichtige Tests Kabel verwenden&#10;- Kabel und Router-Port auf mindestens 1 Gbit/s prüfen&#10;- WLAN während des Vergleichs deaktivieren"
-                                       FontSize="12" Foreground="{StaticResource TextSecondary}"
-                                       TextWrapping="Wrap"/>
+                                       FontSize="12" Foreground="{StaticResource TextSecondary}" TextWrapping="Wrap"/>
                         </StackPanel>
-
                         <StackPanel Grid.Column="2" Margin="12,0,0,0">
-                            <TextBlock Text="Allgemein" FontSize="13" FontWeight="SemiBold"
-                                       Foreground="{StaticResource WarningColor}" Margin="0,0,0,6"/>
+                            <TextBlock Text="Allgemein" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource WarningColor}" Margin="0,0,0,6"/>
                             <TextBlock Text="- Downloads, Cloud-Sync und VPN testweise pausieren&#10;- Router und Netzwerkadapter aktualisieren&#10;- Mit mehreren Zielen testen: nur ein Ziel kann langsam sein"
-                                       FontSize="12" Foreground="{StaticResource TextSecondary}"
-                                       TextWrapping="Wrap"/>
+                                       FontSize="12" Foreground="{StaticResource TextSecondary}" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>

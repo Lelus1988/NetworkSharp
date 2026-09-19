@@ -25,16 +25,14 @@
                         <!-- Target Input -->
                         <StackPanel Grid.Column="0" Margin="0,0,16,0">
                             <TextBlock Text="Ziel" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}" 
-                                     Height="36" Padding="8" Background="#45475A" Foreground="{StaticResource TextPrimary}"
-                                     BorderThickness="0" FontSize="14"/>
+                            <TextBox Text="{Binding Target, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="36" FontSize="14"/>
                         </StackPanel>
                         
                         <!-- Port Range Input -->
                         <StackPanel Grid.Column="1" Margin="0,0,16,0">
                             <TextBlock Text="Portbereich" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding StartPort}" Height="36" Padding="8" Background="#45475A" 
-                                     Foreground="{StaticResource TextPrimary}" BorderThickness="0" FontSize="14"/>
+                            <TextBox Text="{Binding StartPort}" Height="36" FontSize="14"/>
                         </StackPanel>
                         
                         <!-- Scan Button -->
